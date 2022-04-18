@@ -8,7 +8,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class ClsBrowser extends ClsWebElements {
+public class ClsBrowser{
 	
 	
 	public static String BrowserName;

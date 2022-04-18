@@ -1,77 +1,34 @@
 package POM;
 
-import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import selenium.ClsWebElements;
 
-import selenium.ClsBrowser;
-
-public class AtLoginPage extends ClsBrowser{
+public class AtLoginPage extends ClsWebElements{
 	
 	//Locators
-	String Email = "iss@agilethought.com";
-	String Password = "NewPassword!";
-	String UserNameTxt = "//input[@name='loginfmt']";
-	By UserNameTxt2 = By.name("loginfmt");
-	By UserNameTxt3 = By.name("loginfmt");
-	By UserNameTxt4 = By.name("loginfmt");
-	By UserNameTxt5 = By.name("loginfmt");
-	By UserNameTxt6 = By.name("loginfmt");
-	By UserNameTxt7 = By.name("loginfmt");
-	String PasswordTxt = "//input[@id='passwordInput']";
-	String NextBtn = "//input[starts-with(@id, 'idSIButton')]";
-	String StartSessionBtn = "//span[@id='submitButton']"; 
-	String KeepSessionDialog = "//div[@id='lightbox']";
-	String KeepSessionYesBtn = "//input[starts-with(@id, 'idSIButton')]";
-	String Title = "//title";
+	private By emailInput = By.name("email");
+	private By passwordInput = By.id("ap_password");
+	private By continueBtn = By.xpath("//input[@id='continue']");
+	private By signInBtn = By.id("signInSubmit");
 	
 	 
 	//Methods
-	
-	/**
-	 * enter the ms email and go to next screen.
-	 */
-	public void enterCredential() 
+	public void enterEmail(String email) 
 	{
 		WaitForLoad();
-		SendKeys(UserNameTxt2, Email);
-		WaitForElementClickable(NextBtn);
-		Click(NextBtn);
+		SendKeys(emailInput, email);
+		WaitForElementClickable(continueBtn);
+		Click(continueBtn);
 	}
 	
-	/**
-	 * enter ms email and password, then go to next screen.
-	 */
-	public void startSession() 
+	public void enterPassword(String password) 
 	{
 		WaitForLoad();
-		WaitForElement(StartSessionBtn);
-		WaitForElementClickable(StartSessionBtn);
-		SendKeys(PasswordTxt, Password);
-		Click(StartSessionBtn);
+		SendKeys(passwordInput, password);
+		WaitForElementClickable(signInBtn);
+		Click(signInBtn);
 	}
 	
-	/**
-	 * wait for keep session dialog and click on Yes.
-	 */
-	public void keepSessionDialog() 
-	{
-		WaitForLoad();
-		Click(KeepSessionYesBtn);
-	}
-	
-	
-	
-	public void verifyActiveSession() 
-	{
-		WaitForLoad();
-		WaitForElement(Title);
-		WebElement objTitle = getGetWebElement(Title);
-		String currentTitle = objTitle.getAttribute("innerText");
-		Assert.assertEquals("UAT URGENT:  Positions", currentTitle);
-	}
-	
-
 	
 	
 }

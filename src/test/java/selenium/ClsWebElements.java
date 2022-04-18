@@ -20,7 +20,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.aventstack.extentreports.Status;
 
-public class ClsWebElements 
+public class ClsWebElements extends ClsBrowser
 {
 	private int DefaultTimeout = 10;
 	public static Wait<WebDriver> objFluentWait;
@@ -28,7 +28,7 @@ public class ClsWebElements
     public static String strAction = "";
 	
 
-    public WebElement getGetWebElement(By by)
+    public WebElement getWebElement(By by)
     {
         try
         {
@@ -48,7 +48,7 @@ public class ClsWebElements
     
     public WebElement getGetWebElement(String pstrLocator)
     {
-    	return getGetWebElement(By.xpath(pstrLocator));
+    	return getWebElement(By.xpath(pstrLocator));
     }
 	
 	//Added log steps for standardization
