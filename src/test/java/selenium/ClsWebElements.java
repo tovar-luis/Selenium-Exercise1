@@ -209,8 +209,15 @@ public class ClsWebElements extends ClsBrowser
     
     public void WaitForElement(final String pstrLocator) 
     {
+    	WaitForElement(By.xpath(pstrLocator));
+//    	objExplicitWait = new WebDriverWait(ClsBrowser.objDriver, 10);
+//    	objExplicitWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(pstrLocator)));
+    }
+    
+    public void WaitForElement(final By by) 
+    {
     	objExplicitWait = new WebDriverWait(ClsBrowser.objDriver, 10);
-    	objExplicitWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(pstrLocator)));
+    	objExplicitWait.until(ExpectedConditions.presenceOfElementLocated(by));
     }
     
     
@@ -221,6 +228,7 @@ public class ClsWebElements extends ClsBrowser
     	objExplicitWait = new WebDriverWait(ClsBrowser.objDriver, 10);
     	objExplicitWait.until(ExpectedConditions.presenceOfElementLocated(by));
     	objExplicitWait.until(ExpectedConditions.elementToBeClickable(by));
+    	
     }
     
     public void WaitForElementClickable(final String pstrLocator) 
@@ -267,7 +275,20 @@ public class ClsWebElements extends ClsBrowser
     	return alertMessage;
     }
     
+    public boolean checkIfExists(By locator) {
+    	try {
+    		WebDriverWait wait = new WebDriverWait(objDriver, 15);
+    		wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+    		return true;
+    	}catch(Exception e) {
+    		return false;
+    	}
+    	
+    }
     
+    public String getTitle() {
+    	return objDriver.getTitle();
+    }
     
     
 }

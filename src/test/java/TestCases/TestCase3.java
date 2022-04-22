@@ -2,6 +2,7 @@ package TestCases;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
  
@@ -11,16 +12,17 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.aventstack.extentreports.Status;
 
-import POM.AtLoginPage;
-import POM.AtMainPage;
-import POM.AtMenuPage;
-import POM.AtPromotionsPage;
+import POM.AtCartPage;
+import POM.AtRegisterPage;
+import POM.AtTVMenuPage;
 import selenium.ClsBrowser;
 import selenium.ClsReport;
 import selenium.ClsWebElements;
@@ -28,10 +30,10 @@ import selenium.ClsWebElements;
 import org.junit.runner.RunWith;
 
 @RunWith(Parameterized.class)
-public class TestCase_Exec
+public class TestCase3
 {
 	private String userName;
-	private String password;
+	private String accNum;
 	private ClsWebElements webElements;
 	
 	
@@ -50,14 +52,14 @@ public class TestCase_Exec
 		return Arrays.asList(arrayObject);
 	}
 	
-	public TestCase_Exec(String userName, String password) {
+	public TestCase3(String userName, String accNum) {
 		this.userName = userName;
-		this.password = password;
+		this.accNum = accNum;
 	}
 	
 	public static String[][] getExcelData(){
 		String[][] dataTable = null;
-		File file = new File ("./src/test/resources/Driver/DataDriver.xlsx");
+		File file = new File ("./src/test/resources/Driver/Guru99Accounts.xlsx");
 		
 		try {
 			FileInputStream xlfile = new FileInputStream(file);
@@ -69,13 +71,24 @@ public class TestCase_Exec
 			
 			dataTable = new String[numRows][numCols];
 			
-			for(int i=0; i<numRows; i++) {
-				XSSFRow xlRow = xlSheet.getRow(i);
-				for(int j=0; j<numCols; j++) {
-					XSSFCell xlCell = xlRow.getCell(j);
-					dataTable[i][j]= xlCell.toString();
-				}
+			
+			XSSFRow xlRow = xlSheet.getRow(0);
+			XSSFCell xlCell = xlRow.getCell(0);
+			dataTable[0][0]= xlCell.toString();
+			
+			XSSFRow xlRow2 = xlSheet.getRow(0);
+			XSSFCell xlCell2 = xlRow2.getCell(1);
+			dataTable[0][1]= Character.toString(xlCell2.toString().charAt(0));
+			
+			int tempNum = Integer.parseInt(dataTable[0][1]);
+			tempNum++;
+			xlCell2.setCellValue(tempNum);
+			
+			try(FileOutputStream outputStream = new FileOutputStream("./src/test/resources/Driver/Guru99Accounts.xlsx")){
+				xlwb.write(outputStream);
 			}
+			
+			
 			
 		}catch(Exception e) {
 			System.out.println("Error File Handling" + e.toString());
@@ -84,34 +97,33 @@ public class TestCase_Exec
 	}
 	
 	@Test
-	public void amazonTest()
+	public void createAccountTest()
 	{
 		try 
 		{
-			ClsReport.objTest = ClsReport.objExtent.createTest("Amazon Test");
-			webElements.NavigateToUrl("https://www.amazon.com.mx/");
+			String email = userName + accNum + "@gmail.com";
+			System.out.println(email);
+			
+			ClsReport.objTest = ClsReport.objExtent.createTest("Create Account Test");
+			webElements.NavigateToUrl("http://live.guru99.com/index.php/tv.html");
 			webElements.WaitForLoad();
 			ClsReport.fnLog(Status.PASS, "PAGE LOADED SUCCESFULLY", true);
 			
-			AtMainPage objMainPage = new AtMainPage();
-			objMainPage.clickOnLogin();
-			Thread.sleep(2000);
+			ClsReport.fnLog(Status.INFO, "INFO - Navigating to the register page", false);
+			AtTVMenuPage objTVPage = new AtTVMenuPage();
+			objTVPage.goToRegisterPage();
 			
-			AtLoginPage objLoginPage = new AtLoginPage();
-			objLoginPage.enterEmail(userName);
-			Thread.sleep(2000);
-			objLoginPage.enterPassword(password);
+			ClsReport.fnLog(Status.INFO, "INFO - Filling the account information", false);
+			AtRegisterPage objRegisterPage = new AtRegisterPage(email);
+			objRegisterPage.fillAccountInfo();
 			
-			AtMenuPage objMenuPage = new AtMenuPage();
-			objMenuPage.goToPromotions();
+			ClsReport.fnLog(Status.INFO, "INFO - Clicking on register button", false);
+			objRegisterPage.clickRegisterButton();
 			
-			AtPromotionsPage objPromoPage = new AtPromotionsPage();
-			objPromoPage.filterLightningDeals();
-			Thread.sleep(2000);
+			ClsReport.fnLog(Status.INFO, "INFO - Checking if registered correctly", false);
+			Assert.assertTrue(objRegisterPage.checkIfRegistered());
 			
-			objPromoPage.getDealElements();
-			objPromoPage.printDealElements();
-			Thread.sleep(2000);
+			
 			ClsReport.fnLog(Status.PASS, "TEST PERFORMED SUCCESFULLY", true);
 		}
 		catch(Exception e) 
@@ -119,6 +131,7 @@ public class TestCase_Exec
 			ClsReport.fnLog(Status.FAIL, "not executed successfully. \n Exception: " + e.getMessage() , false);
 		}
 	}
+	
 
 	@After
 	public void tearDown() 
