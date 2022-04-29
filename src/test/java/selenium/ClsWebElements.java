@@ -46,7 +46,7 @@ public class ClsWebElements extends ClsBrowser
     }
     
     
-    public WebElement getGetWebElement(String pstrLocator)
+    public WebElement getWebElement(String pstrLocator)
     {
     	return getWebElement(By.xpath(pstrLocator));
     }
@@ -88,8 +88,8 @@ public class ClsWebElements extends ClsBrowser
     		// Waiting 30 seconds for an element to be present on the page, checking
     	 	   // for its presence once every 5 seconds.
     	    	objFluentWait = new FluentWait<WebDriver>(ClsBrowser.objDriver)
-    	 	       .withTimeout(Duration.ofSeconds(30L))
-    	 	       .pollingEvery(Duration.ofSeconds(3L))
+    	 	       .withTimeout(Duration.ofSeconds(30))
+    	 	       .pollingEvery(Duration.ofSeconds(5))
     	 	       .ignoring(NoSuchElementException.class);
     	 	       
     	    	//Get Web Element and perform action
@@ -137,6 +137,24 @@ public class ClsWebElements extends ClsBrowser
 		return Click(By.xpath(pstrLocator));
 	}
     
+    public boolean Click(final WebElement by) 
+	{
+    	try 
+    	{
+    		ClsReport.fnLog(Status.INFO, "Step - Click on element: " + by.toString(), false);
+    		
+    		objExplicitWait = new WebDriverWait(ClsBrowser.objDriver, DefaultTimeout);
+    		objExplicitWait.until(ExpectedConditions.elementToBeClickable(by));
+    		by.click();
+    		ClsReport.fnLog(Status.PASS, "Step - The Element " + by.toString() + " was clicked succesfully.", true);
+    		return true;
+    	}
+    	catch(Exception e) 
+    	{
+    		ClsReport.fnLog(Status.FAIL, "Step - The Element: " + by.toString() + " was not clicked succesfuly. Exception: " + e.getStackTrace(), true);
+    		return false;
+    	}
+	}
     
 	//Added log steps for standardization
     public boolean SendKeys(final By by, String pValue) 
@@ -198,6 +216,21 @@ public class ClsWebElements extends ClsBrowser
     		ClsReport.fnLog(Status.FAIL, "Step - Select Item: " + pValue + " by method: " + pMethod + " from: " + by.toString() + " was not done succesfully. Exception: " + e.getStackTrace(), true);
     		return false;
     	}    	
+    }
+    
+    public boolean SelectItem(final By pSelect, final By pOption) {
+		try {
+			WebElement select = objDriver.findElement(pSelect);
+			WaitForLoad();
+			WebElement option = select.findElement(pOption);
+			Click(option);
+    		ClsReport.fnLog(Status.PASS, "Step - Select Option " + pOption.toString() + " from " + pSelect.toString() + " was done succesfully", true);
+			return true;
+		}catch(Exception e) {
+			
+			return false;
+		}
+    	
     }
     
     public boolean SelectItem(final String pstrLocator, String pMethod, String pValue) 
@@ -290,5 +323,8 @@ public class ClsWebElements extends ClsBrowser
     	return objDriver.getTitle();
     }
     
+    public String getText(By locator) {
+    	return getWebElement(locator).getText();
+    }
     
 }
